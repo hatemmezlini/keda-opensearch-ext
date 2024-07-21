@@ -1,0 +1,1 @@
+# keda-opensearch-ext
