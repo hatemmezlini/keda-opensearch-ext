@@ -23,9 +23,9 @@ To run the external scaler locally, follow these steps. For test purposes, you w
     cd external-scaler-for-keda
     ```
 
-2. **Set GO path **:
+2. **Install dependencies **:
     ```bash
-    export GOPATH=$pwd
+    go mod tidy
     ```
 
 3. **Test the Application locally**:
