@@ -30,6 +30,16 @@ var (
 	esPassword = os.Getenv("ES_PASSWORD")
 )
 
+// HTTP client and transport to be reused
+var (
+	unsafeSSLTransport = &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	secureTransport = &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: false},
+	}
+)
+
 // TemplateRequest struct to define the template request
 type TemplateRequest struct {
 	ID     string                 `json:"id"`
@@ -97,15 +107,20 @@ func executeSearchTemplate(unsafeSSL bool, index, searchTemplateName, parameters
 	req.Header.Set("Content-Type", "application/json")
 	req.SetBasicAuth(esUsername, esPassword)
 
-	// Create a custom Transport that disables SSL verification
-	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: unsafeSSL}, // Disable SSL verification
+	// Choose the appropriate transport
+	var tr *http.Transport
+	if unsafeSSL {
+		tr = unsafeSSLTransport
+	} else {
+		tr = secureTransport
 	}
+
 	// Create a custom HTTP client with the custom Transport
 	client := &http.Client{
 		Transport: tr,
 		Timeout:   30 * time.Second, // Set a timeout if needed
 	}
+
 	// Execute the HTTP request
 	resp, err := client.Do(req)
 	if err != nil {
