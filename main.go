@@ -169,7 +169,10 @@ func (e *ExternalScaler) IsActive(ctx context.Context, scaledObject *pb.ScaledOb
 		return nil, status.Error(codes.InvalidArgument, "unsafeSSL must be either true or false")
 	}
 	unsafeSSL := unsafeSSLlower == "true"
-	valueLocation := scaledObject.ScalerMetadata["valueLocation"]
+	valueLocation, ok := scaledObject.ScalerMetadata["valueLocation"]
+	if !ok {
+		valueLocation = "hits.total.value"
+	}
 	// Parse activationTargetValueStr
 	activationTargetValueStr, ok := scaledObject.ScalerMetadata["activationTargetValue"]
 	activationTargetValue := 0 // Default value
@@ -182,8 +185,8 @@ func (e *ExternalScaler) IsActive(ctx context.Context, scaledObject *pb.ScaledOb
 		}
 	}
 
-	if len(index) == 0 || len(searchTemplateName) == 0 || len(parameters) == 0 || len(valueLocation) == 0 {
-		return nil, status.Error(codes.InvalidArgument, "index, searchTemplateName, parameters and valueLocation must be specified")
+	if len(index) == 0 || len(searchTemplateName) == 0 || len(parameters) == 0 {
+		return nil, status.Error(codes.InvalidArgument, "index, searchTemplateName and parameters must be specified")
 	}
 
 	value, err := executeSearchTemplate(unsafeSSL, index, searchTemplateName, parameters, valueLocation)
@@ -230,9 +233,12 @@ func (e *ExternalScaler) GetMetrics(ctx context.Context, metricRequest *pb.GetMe
 		return nil, status.Error(codes.InvalidArgument, "unsafeSSL must be either true or false")
 	}
 	unsafeSSL := unsafeSSLlower == "true"
-	valueLocation := metricRequest.ScaledObjectRef.ScalerMetadata["valueLocation"]
-	if len(index) == 0 || len(searchTemplateName) == 0 || len(parameters) == 0 || len(valueLocation) == 0 {
-		return nil, status.Error(codes.InvalidArgument, "index, searchTemplateName, parameters and valueLocation must be specified")
+	valueLocation, ok := metricRequest.ScaledObjectRef.ScalerMetadata["valueLocation"]
+	if !ok {
+		valueLocation = "hits.total.value"
+	}
+	if len(index) == 0 || len(searchTemplateName) == 0 || len(parameters) == 0 {
+		return nil, status.Error(codes.InvalidArgument, "index, searchTemplateName and parameters must be specified")
 	}
 	value, err := executeSearchTemplate(unsafeSSL, index, searchTemplateName, parameters, valueLocation)
 	if err != nil {
@@ -260,7 +266,10 @@ func (e *ExternalScaler) StreamIsActive(scaledObject *pb.ScaledObjectRef, epsSer
 		return status.Error(codes.InvalidArgument, "unsafeSSL must be either true or false")
 	}
 	unsafeSSL := unsafeSSLlower == "true"
-	valueLocation := scaledObject.ScalerMetadata["valueLocation"]
+	valueLocation, ok := scaledObject.ScalerMetadata["valueLocation"]
+	if !ok {
+		valueLocation = "hits.total.value"
+	}
 	// Parse activationTargetValue
 	activationTargetValueStr, ok := scaledObject.ScalerMetadata["activationTargetValue"]
 	activationTargetValue := 0 // Default value
@@ -272,8 +281,8 @@ func (e *ExternalScaler) StreamIsActive(scaledObject *pb.ScaledObjectRef, epsSer
 			activationTargetValue = 0
 		}
 	}
-	if len(index) == 0 || len(searchTemplateName) == 0 || len(parameters) == 0 || len(valueLocation) == 0 {
-		return status.Error(codes.InvalidArgument, "index, searchTemplateName, parameters and valueLocation must be specified")
+	if len(index) == 0 || len(searchTemplateName) == 0 || len(parameters) == 0 {
+		return status.Error(codes.InvalidArgument, "index, searchTemplateName and parameters must be specified")
 	}
 	for {
 		select {
