@@ -136,7 +136,7 @@ func executeSearchTemplate(unsafeSSL bool, index, searchTemplateName, parameters
 
 	// Check if the response status is OK
 	if resp.StatusCode != http.StatusOK {
-		return 0, status.Error(codes.Internal, err.Error())
+		return 0, status.Errorf(codes.Internal, "returned status code: %v", resp.StatusCode)
 	}
 
 	// Parse the JSON response
