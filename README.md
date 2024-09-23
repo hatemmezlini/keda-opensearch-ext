@@ -47,33 +47,6 @@ To build and run the external scaler as a Docker container, follow these steps:
     docker run -d -p 8080:8080 -p 6000:6000 --name keda-opensearch-ext -e ES_URL="http://localhost:9200" -e ES_USERNAME="keda" -e ES_PASSWORD="keda" opensearch-keda-externalscaler your-username/external-scaler-for-keda:latest
     ```
 
-## How to Install with Helm in Kubernetes
-
-To deploy the external scaler using Helm, follow these steps:
-
-1. **Add the Helm Chart Repository** (if you have a custom Helm repository):
-    ```bash
-    helm repo add my-repo https://charts.myrepo.com
-    helm repo update
-    ```
-
-2. **Install the Helm Chart**:
-    ```bash
-    helm install external-scaler my-repo/external-scaler --set scalerSetting=value
-    ```
-
-   If you are using a local Helm chart, navigate to the chart directory and install:
-    ```bash
-    helm install external-scaler ./helm-chart --set scalerSetting=value
-    ```
-
-3. **Verify the Installation**:
-    ```bash
-    kubectl get pods -l app=external-scaler
-    ```
-
-   Ensure that the external scaler pod is running and healthy.
-
 ## Conclusion
 
 Thank you for using the External Scaler for KEDA! This project aims to provide a flexible and powerful solution to extend KEDA's autoscaling capabilities. If you have any questions or encounter any issues, feel free to open an issue on the GitHub repository. Happy scaling!
