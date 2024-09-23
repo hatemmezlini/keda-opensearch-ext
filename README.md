@@ -20,7 +20,7 @@ To run the external scaler locally, follow these steps. For test purposes, you w
 1. **Clone the Repository**:
     ```bash
     git clone https://github.com/hatemmezlini/keda-opensearch-ext.git
-    cd external-scaler-for-keda
+    cd keda-opensearch-ext
     ```
 
 2. **Install dependencies **:
@@ -46,6 +46,31 @@ To build and run the external scaler as a Docker container, follow these steps:
     ```bash
     docker run -d -p 8080:8080 -p 6000:6000 --name keda-opensearch-ext -e ES_URL="http://localhost:9200" -e ES_USERNAME="keda" -e ES_PASSWORD="keda" opensearch-keda-externalscaler your-username/external-scaler-for-keda:latest
     ```
+
+## Usage example
+```
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: your-scaledobject-name
+  namespace: your-namespace
+spec:
+  scaleTargetRef:
+    name: your-scaledobject-name
+    # kind: Statefulset (defaults to Deployment)
+  pollingInterval: 30
+  cooldownPeriod: 43200
+  triggers:
+    - type: external
+      metadata:
+        scalerAddress: opensearch-externalscaler.your-namespace.svc.cluster.local:6000
+        unsafeSSL: "true"  # default is false
+        index: "your-index-name-*"
+        searchTemplateName: "search_template_name"
+        targetValue: "5000"
+        parameters: "param1=value1,param2=value2"
+
+```
 
 ## Conclusion
 

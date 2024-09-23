@@ -25,9 +25,9 @@ import (
 )
 
 var (
-	esURL      = os.Getenv("ES_URL")
-	esUsername = os.Getenv("ES_USERNAME")
-	esPassword = os.Getenv("ES_PASSWORD")
+	opensearchURL      = os.Getenv("OPENSEARCH_URL")
+	opensearchUsername = os.Getenv("OPENSEARCH_USERNAME")
+	opensearchPassword = os.Getenv("OPENSEARCH_PASSWORD")
 )
 
 // HTTP client and transport to be reused
@@ -98,14 +98,14 @@ func executeSearchTemplate(unsafeSSL bool, index, searchTemplateName, parameters
 	}
 
 	// Create a new HTTP request
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/%s/_search/template", esURL, index), bytes.NewBuffer(requestBody))
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/%s/_search/template", opensearchURL, index), bytes.NewBuffer(requestBody))
 	if err != nil {
 		return 0, status.Error(codes.Internal, err.Error())
 	}
 
 	// Set the headers and basic auth
 	req.Header.Set("Content-Type", "application/json")
-	req.SetBasicAuth(esUsername, esPassword)
+	req.SetBasicAuth(opensearchUsername, opensearchPassword)
 
 	// Choose the appropriate transport
 	var tr *http.Transport
@@ -305,12 +305,12 @@ func (e *ExternalScaler) StreamIsActive(scaledObject *pb.ScaledObjectRef, epsSer
 // readinessHandler checks connection to Opensearch
 func readinessHandler(w http.ResponseWriter, r *http.Request) {
 	// Try to get a basic response from Elasticsearch
-	req, err := http.NewRequest("GET", esURL, nil)
+	req, err := http.NewRequest("GET", opensearchURL, nil)
 	if err != nil {
 		http.Error(w, "Failed to create request", http.StatusInternalServerError)
 		return
 	}
-	req.SetBasicAuth(esUsername, esPassword)
+	req.SetBasicAuth(opensearchUsername, opensearchPassword)
 	// Create a custom Transport that disables SSL verification
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true}, // Disable SSL verification
