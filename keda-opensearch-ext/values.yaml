@@ -1,0 +1,36 @@
+# Default values for keda-opensearch-ext.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: hatemmezlini/external-scaler-for-keda
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+service:
+  name: grpc
+  type: ClusterIP
+  port: 6000
+
+ingress:
+  enabled: false
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths: []
+  tls: []
+
+resources: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+namespace: default
+labels: {}
+
+# Set the secret name that contains the environment variables
+secretName: "my-app-secret"
+

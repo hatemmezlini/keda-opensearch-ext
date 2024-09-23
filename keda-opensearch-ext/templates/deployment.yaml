@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "my-app.fullname" . }}
+  labels:
+    {{- include "my-app.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "my-app.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "my-app.selectorLabels" . | nindent 8 }}
+    spec:
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 6000
+            - containerPort: 8080
+          env:
+            - name: OPENSEARCH_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secretName }}
+                  key: OPENSEARCH_URL
+            - name: OPENSEARCH_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secretName }}
+                  key: OPENSEARCH_USER
+            - name: OPENSEARCH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secretName }}
+                  key: OPENSEARCH_PASSWORD
+      restartPolicy: Always
+      resources:
+        {{- toYaml .Values.resources | nindent 8 }}
