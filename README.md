@@ -44,7 +44,7 @@ To build and run the external scaler as a Docker container, follow these steps:
 
 2. **Run the Docker Container**:
     ```bash
-    docker run -d -p 8080:8080 -p 6000:6000 --name keda-opensearch-ext -e ES_URL="http://localhost:9200" -e ES_USERNAME="keda" -e ES_PASSWORD="keda" opensearch-keda-externalscaler your-username/external-scaler-for-keda:latest
+    docker run -d -p 8080:8080 -p 6000:6000 --name keda-opensearch-ext -e OPENSEARCH_URL="http://localhost:9200" -e OPENSEARCH_USERNAME="keda" -e OPENSEARCH_PASSWORD="keda" opensearch-keda-externalscaler your-username/external-scaler-for-keda:latest
     ```
 
 ## Usage example
