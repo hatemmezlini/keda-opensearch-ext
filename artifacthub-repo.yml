@@ -1,6 +1,6 @@
 # Artifact Hub repository metadata file
 
 repositoryID: da3886f1-ae58-4410-bcd2-46eb863e7964
-owners: hatem.mezlini
+owners:
   - name: hatem mezlini
     email: hatem.mezlini@email.com
